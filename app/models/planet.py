@@ -14,7 +14,7 @@ planets = [
     Planet(6, "Saturn", "Rings made from particles of ice, dust, and rock. Mainly gas or ice.", 146),
     Planet(7, "Uranus", "Mainly gas or ice.", 27),
     Planet(8, "Neptune", "The Blue Planet. Mainly gas or ice.", 14),
-    Planet(9, "Pluto", "A dwarf planet", 14)
+    Planet(9, "Pluto", "A dwarf planet under", 14)
 ]
 
 # https://science.nasa.gov/solar-system/planets/
