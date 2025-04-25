@@ -21,9 +21,24 @@ def create_planet():
         "description": new_planet.description,
         "moons": new_planet.moons,
     }
-
     return response, 201
 
+@planets_bp.get("")
+def get_all_planets():
+    query = db.select(Planet).order_by(Planet.id)
+    planets = db.session.scalars(query)
+
+    planets_response = []
+    for planet in planets:
+        planets_response.append(
+            {
+                "id": planet.id,
+                "name": planet.name,
+                "description": planet.description,
+                "moons": planet.moons,
+            }
+        )
+    return planets_response
 # @planets_bp.get("")
 # def get_all_planets():
 #     planets_response = []
