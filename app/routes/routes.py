@@ -66,7 +66,24 @@ def get_one_planet(planet_id):
         "moons": planet.moons,
     }
 
+@planets_bp.put("/<planet_id>")
+def update_planet(planet_id):
+    planet = validate_planet(planet_id)
+    request_body = request.get_json()
 
+    planet.title = request_body["name"]
+    planet.description = request_body["description"]
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
+
+@planets_bp.delete("/<planet_id>")
+def delete_planet(planet_id):
+    planet = validate_planet(planet_id)
+    db.session.delete(planet)
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
 
 # @planets_bp.get("")
 # def get_all_planets():
