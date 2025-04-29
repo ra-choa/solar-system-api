@@ -81,3 +81,58 @@ def get_one_planet(planet_id):
         "description": planet.description,
         "moons": planet.moons,
     }
+
+@planets_bp.put("/<planet_id>")
+def update_planet(planet_id):
+    planet = validate_planet(planet_id)
+    request_body = request.get_json()
+
+    planet.title = request_body["name"]
+    planet.description = request_body["description"]
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
+
+@planets_bp.delete("/<planet_id>")
+def delete_planet(planet_id):
+    planet = validate_planet(planet_id)
+    db.session.delete(planet)
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
+
+# @planets_bp.get("")
+# def get_all_planets():
+#     planets_response = []
+#     for planet in planets:
+#         planets_response.append(
+#             {"id": planet.id,
+#             "name": planet.name,
+#             "description": planet.description,
+#             "moon": planet.description}
+#         )
+#     return planets_response
+
+# def validate_planet(id):
+#     try:
+#         id = int(id)
+#     except:
+#         response = {"message": f"planet {id} invalid"}
+#         abort(make_response(response, 400))
+
+#     for planet in planets:
+#         if planet.id == id:
+#             return planet
+    
+#     response = {"message": f"planet {id} not found"}
+#     abort(make_response(response, 404))
+
+# @planets_bp.get("/<id>")
+# def get_one_planet(id):
+#     planet = validate_planet(id)
+#     return {
+#         "id": planet.id,
+#         "name": planet.name,
+#             "description": planet.description,
+#             "moon": planet.description
+#     }
