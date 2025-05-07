@@ -21,11 +21,11 @@ def app():
         db.session.remove()
 
     with app.app_context():
-        db.create_all()
+        db.create_all() # creating all the test database tables
         yield app
 
     with app.app_context():
-        db.drop_all()
+        db.drop_all() # dropping all the test database tables (cleaning)
 
 
 @pytest.fixture

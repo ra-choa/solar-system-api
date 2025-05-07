@@ -28,7 +28,7 @@ def test_get_one_planet_empty(client):
 
     # Assert
     assert response.status_code == 404
-    assert response_body["message"] == "planet id 1 not found"
+    assert response_body["message"] == "Planet 1 not found"
 
 def test_create_one_planet(client):
     # Act

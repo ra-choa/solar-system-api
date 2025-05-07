@@ -1,10 +1,11 @@
 from flask import abort, Blueprint, make_response, request, Response
 from app.models.planet import Planet
+from app.models.moon import Moon
 from ..db import db
 from sqlalchemy import cast, String, Integer
 from .route_utilities import validate_model
 
-bp = Blueprint("bp", __name__, url_prefix = "/planets")
+bp = Blueprint("planets_bp", __name__, url_prefix = "/planets")
 
 @bp.post("")
 def create_planet():
@@ -33,17 +34,17 @@ def get_all_planets():
     if description_param:
         query = query.where(Planet.description.ilike(f"%{description_param}%"))
     
-    moons_param = request.args.get("moons")
-    if moons_param: 
-        # Assume that if < or > in moons_param, then it's followed by a number.
-        if '<' in moons_param:
-            num = int(moons_param[1:])
-            query = query.where(Planet.moons < num)
-        elif '>' in moons_param:
-            num = int(moons_param[1:])
-            query = query.where(Planet.moons > num)
-        else:
-            query = query.filter(Planet.moons == int(moons_param))
+    # moons_param = request.args.get("moons")
+    # if moons_param: 
+    #     # Assume that if < or > in moons_param, then it's followed by a number.
+    #     if '<' in moons_param:
+    #         num = int(moons_param[1:])
+    #         query = query.where(Planet.moons < num)
+    #     elif '>' in moons_param:
+    #         num = int(moons_param[1:])
+    #         query = query.where(Planet.moons > num)
+    #     else:
+    #         query = query.filter(Planet.moons == int(moons_param))
 
     query = query.order_by(Planet.id)
     planets = db.session.scalars(query)
@@ -77,3 +78,29 @@ def delete_planet(planet_id):
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
+
+# below this are the endpoints that would have been in 'Authors' 
+@bp.post("/<planet_id>/moons") 
+def create_moon_with_planet(planet_id):
+    planet = validate_model(Planet, planet_id)
+    
+    request_body = request.get_json()
+    request_body["planet_id"] = planet.id
+
+    try:
+        new_moon = Moon.from_dict(request_body)
+
+    except KeyError as error:
+        response = {"message": f"Invalid request: missing {error.args[0]}"}
+        abort(make_response(response, 400))
+        
+    db.session.add(new_moon)
+    db.session.commit()
+
+    return make_response(new_moon.to_dict(), 201)
+
+@bp.get("/<planet_id>/moons")
+def get_books_by_author(planet_id):
+    planet = validate_model(Planet, planet_id)
+    response = [moon.to_dict() for moon in planet.moons]
+    return response
