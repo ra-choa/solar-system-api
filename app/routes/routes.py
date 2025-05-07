@@ -55,13 +55,13 @@ def get_all_planets():
 
 @bp.get("/<planet_id>")
 def get_one_planet(planet_id):
-    planet = validate_model(planet_id)
+    planet = validate_model(Planet, planet_id)
 
     return planet.to_dict()
 
 @bp.put("/<planet_id>")
 def update_planet(planet_id):
-    planet = validate_model(planet_id)
+    planet = validate_model(Planet, planet_id)
     request_body = request.get_json()
 
     planet.title = request_body["name"]
@@ -72,7 +72,7 @@ def update_planet(planet_id):
 
 @bp.delete("/<planet_id>")
 def delete_planet(planet_id):
-    planet = validate_model(planet_id)
+    planet = validate_model(Planet, planet_id)
     db.session.delete(planet)
     db.session.commit()
 
